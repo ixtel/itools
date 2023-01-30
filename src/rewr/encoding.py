@@ -1,7 +1,6 @@
 import codecs
 
 
-# TODO проверить эти раскодировщики
 def get_file_bom_encodig(filename):
 	"""
 	:param filename:

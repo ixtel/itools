@@ -69,7 +69,6 @@ def write_big(items, path, rw='w+', ext='txt', encoding='utf-8'):
 	:param encoding:
 	:return:
 	"""
-	# TODO move to rewr
 	if not path.endswith('.' + ext):
 		path += ".%s" % ext
 	os.makedirs(os.path.dirname(path), exist_ok=True)

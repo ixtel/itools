@@ -19,8 +19,6 @@ def worker(shared_manager_data_instance, function_to_run, process_n, thread_n):
 	:return:
 	"""
 	log('START worker N =', process_n, 'thread N=', thread_n, level='DEBUG')
-	# i = 0
-	# while True:
 	try:
 		function_to_run(shared_manager_data_instance)
 	except Exception as ex:
@@ -272,7 +270,6 @@ class ListMP(ListBase):
 		:param items:
 		:param max_size:
 		"""
-		# log(f'ListMP lock={lock}, items={items}, max_size={max_size}', level='INFO')
 		super().__init__(items=items, max_size=max_size)
 		self.lock = lock
 		self.items = items

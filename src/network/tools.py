@@ -179,10 +179,8 @@ def prepend_http(url):
 	:param url:
 	:return:
 	"""
-	# regx = re.compile('^(?:f|ht)tps?://','i')
 	regx = re.compile('https?://')
 	result = regx.match(url)
-	# print(result)
 	if not result:
 		url = "http://" + url
 	return url

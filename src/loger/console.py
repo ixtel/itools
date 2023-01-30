@@ -32,7 +32,6 @@ def section(name):
 	print("\n{} {}".format(
 		colored("#", 'cyan', attrs=['bold']),
 		colored(name, attrs=['bold'])
-		# colored()
 	)
 	)
 

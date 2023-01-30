@@ -58,7 +58,6 @@ def product_pure_horizontal(numbers, length, start=0, count=None):
 	else:
 		stop = start + count
 	
-	# offsets = array('L')
 	offsets = []
 	for col in range(length):
 		offsets.append(n ** col)
@@ -108,13 +107,9 @@ def unique_everseen(iterable, key=None, agg=None):
 	seen = set()
 	seen_add = seen.add
 	for element in iterable:
-		# print('element', element)
 		if key is not None:
-			# print('element1', element)
 			element = element[key]
-		# print('element2', element)
 		if agg is not None:
-			# print('agg is not None')
 			element = agg(element)
 		if element not in seen:
 			seen_add(element)
@@ -154,7 +149,6 @@ def permutator(items: list, length_from: int = 1, length_to: int = 1) -> list:
 	n = length_to if length_to > 1 else len(items)
 	for i in range(length_from, n + 1):
 		for instance in itertools.permutations(items, r=i):
-			# print('instance', instance)
 			_r = ''.join(list(instance))
 			yield _r
 	pass
@@ -236,7 +230,6 @@ def permutator_az(alphabet: list, k: int, length_all=False, parent=''):
 	:param parent:
 	:return:
 	"""
-	# n = len(alphabet)
 	if k > 0:
 		for e in alphabet:
 			if k > 1:

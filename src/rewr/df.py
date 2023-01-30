@@ -3,6 +3,7 @@ import os
 import pandas as pd
 from pandas import HDFStore
 
+
 def _get_col_widths(dataframe):
 	"""
 	:param dataframe:
@@ -242,7 +243,7 @@ def df_group_to_xlsx(
 		df.to_excel(writer, sheet_name=sheet_name, header=False, index=False, startrow=row, startcol=1)
 		row = row + len(df.index) + spaces + 1
 	worksheet = writer.sheets[sheet_name]
-	# TODO BUG df берется от последней итерации цикла выше.
+	
 	if df:
 		for idx, col in enumerate(df):
 			series = df[col]

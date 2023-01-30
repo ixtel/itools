@@ -270,8 +270,6 @@ def folder_reed_recrussive_files(path: Union[List, str], ext=None):
 		path = [path]
 	for _path in path:
 		if Path(_path).is_file():
-			# TODO сначала добавить все файлы в один список а потом возвращать.
-			# TODO Ошибка
 			yield _path
 		for currentpath, folders, files in os.walk(_path):
 			for file in files:
