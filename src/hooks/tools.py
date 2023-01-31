@@ -139,8 +139,8 @@ def get_resource_data(name=None, path_dir_name='data', path_file='data.txt'):
 	:return:
 	"""
 	_data = path_join(path_dir_name, path_file)
-	_ROOT = pkg_resources.resource_string(name or __name__, _data)
-	return _ROOT
+	_root = pkg_resources.resource_string(name or __name__, _data)
+	return _root
 
 
 def get_size_dir_natural(path='.'):
@@ -216,11 +216,11 @@ def folder_reed_recrussive(path, ext='*'):
 	:param ext:
 	:return:
 	"""
-	path = os.path.normpath(path)
+	path = path_norm(path)
 	res = {}
 	for root, dirs, files in os.walk(path):
 		data_files = []
-		file_dir_full = os.path.normpath(root)
+		file_dir_full = path_norm(root)
 		file_dir = file_dir_full.replace(path, '')
 		file_dir_list = path_split(file_dir)
 		if not file_dir_list:
@@ -242,7 +242,7 @@ def folder_reed_recrussive(path, ext='*'):
 			file_name, _ext = os.path.splitext(_file)
 			_ext = _ext[1:]
 			if _ext == ext or ext == '*':
-				file_path_full = os.path.join(root, _file)
+				file_path_full = path_join(root, _file)
 				data_files.append((file_name, file_path_full))
 				r[file_name] = file_path_full
 	return res
@@ -273,7 +273,7 @@ def folder_reed_recrussive_files(path: Union[List, str], ext=None):
 			yield _path
 		for currentpath, folders, files in os.walk(_path):
 			for file in files:
-				file_name = os.path.join(currentpath, file)
+				file_name = path_join(currentpath, file)
 				if ext is not None:
 					if file_name.endswith(ext):
 						yield file_name
@@ -316,7 +316,7 @@ def copytree(src, dst, symlinks=False, ignore=None, dirs_exist_ok=True):
 	:return:
 	"""
 	os.makedirs(dst, exist_ok=True)
-	_head, _tail = os.path.split(src)
+	_head, _tail = path_split(src)
 	s = path_norm(src)
 	d = path_norm(path_join(dst, _tail))
 	if not os.path.exists(d) or os.stat(s).st_mtime - os.stat(d).st_mtime > 1:
@@ -527,7 +527,7 @@ def _buf_gen(size):
 	return size * size
 
 
-def line_count_1(path):
+def lines_in_file(path):
 	"""
 	:param path:
 	:return:
@@ -541,6 +541,3 @@ def line_count_1(path):
 			lines += buf.count(b'\n')
 			buf = read_f(buf_size)
 		return lines
-
-
-lines_in_file = line_count_1

@@ -80,13 +80,13 @@ def unique_everseen_v0(iterable, key=None, agg=None):
 	seen = set()
 	seen_add = seen.add
 	if agg is None:
-		print('agg is None')
+		log('agg is None')
 		for element in itertools.filterfalse(seen.__contains__, iterable):
-			print('element', element)
+			log('element', element)
 			if key is not None:
-				print('element1', element)
+				log('element1', element)
 				element = element[key]
-				print('element2', element)
+				log('element2', element)
 			seen_add(element)
 			yield element
 	else:
@@ -272,7 +272,7 @@ def permutattor_calc_file(length_from=1, length=5):
 	:param length:
 	:return:
 	"""
-	print('length_from ==', length_from, 'length ==', length)
+	log('length_from ==', length_from, 'length ==', length)
 	lines_count = 0
 	file_size = 0
 	for i in range(length_from, length + 1):
@@ -281,10 +281,10 @@ def permutattor_calc_file(length_from=1, length=5):
 		lines_count += _lines_count
 		file_size += _file_size
 	file_size_d = Decimal(file_size)
-	print('Lines count', lines_count)
-	print('File size byte', file_size_d)
-	print('File size Kb', file_size_d / 1000)
-	print('File size Mb', file_size_d / 1000000)
-	print('File size Gb', file_size_d / 1000000000)
-	print('File size Tb', file_size_d / 1000000000000)
+	log('Lines count', lines_count)
+	log('File size byte', file_size_d)
+	log('File size Kb', file_size_d / 1000)
+	log('File size Mb', file_size_d / 1000000)
+	log('File size Gb', file_size_d / 1000000000)
+	log('File size Tb', file_size_d / 1000000000000)
 	return lines_count, file_size_d

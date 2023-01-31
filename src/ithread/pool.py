@@ -1,5 +1,6 @@
 import itertools
 import random
+import subprocess
 import time
 from multiprocessing import Pool as pPool
 from multiprocessing.dummy import Pool as tPool
@@ -8,96 +9,6 @@ from typing import Union
 
 from ..hooks.power import file_flag_set, file_flag_get
 from ..config import log
-
-
-def worker(shared_manager_data_instance, function_to_run, process_n, thread_n):
-	"""
-	:param shared_manager_data_instance:
-	:param function_to_run:
-	:param process_n:
-	:param thread_n:
-	:return:
-	"""
-	log('START worker N =', process_n, 'thread N=', thread_n, level='DEBUG')
-	try:
-		function_to_run(shared_manager_data_instance)
-	except Exception as ex:
-		log('Exception', ex, 'function_to_run', function_to_run, level='WARNING')
-	return 'DONE worker {} thread {}'.format(process_n, thread_n)
-
-
-def worker_done(result):
-	"""
-	:param result:
-	:return:
-	"""
-	log('DONE worker. result=', result)
-
-
-def thread_pool(shared_manager_data_instance, function_to_run, max_threads, process_n):
-	"""
-	:param shared_manager_data_instance:
-	:param function_to_run:
-	:param max_threads:
-	:param process_n:
-	:return:
-	"""
-	try:
-		log('START Process ', process_n, level='DEBUG')
-		with tPool(max_threads) as executor:
-			multiple_results = [
-				executor.apply_async(
-					worker,
-					args=(
-						shared_manager_data_instance,
-						function_to_run,
-						process_n,
-						i
-					),
-					callback=worker_done
-				) for i in range(max_threads)
-			]
-			_res = [res.get() for res in multiple_results]
-			log('thread_pool _res', _res, level='DEBUG')
-	except (KeyboardInterrupt, SystemExit):
-		exit(0)
-	return 'DONE Process {}'.format(process_n)
-
-
-def __test_queue_reader(q):
-	"""
-	:param q:
-	:return:
-	"""
-	i = 0
-	while True:
-		try:
-			item = q.get()
-		except Exception as ex:
-			log('Exception', ex)
-			item = None
-		if item is None:
-			i += 1
-			log(f'sleep = {i}')
-			time.sleep(i)
-		else:
-			i = 0
-			log(f'item = {item}')
-			yield item
-
-
-def __test_queue_writer(q, value=random.random()):
-	"""
-	:param q:
-	:param value:
-	:return:
-	"""
-	i = 0
-	while True:
-		q.put(value)
-		log('put Q')
-		i += 3
-		time.sleep(i)
 
 
 class ListPassed:
@@ -504,6 +415,20 @@ class SharedManager(SyncManager):
 # }
 
 
+def run_shell(cmd):
+	"""
+	:param cmd:
+	:return:
+	"""
+	try:
+		result = subprocess.check_output(cmd, shell=True).decode('utf-8')
+		
+		return result
+	except Exception as ex:
+		log('Exception', ex)
+		return None
+
+
 def build_shared_manager(shared_object=Union[ListMP, ListBase, FlagMP], params=None):
 	"""
 	:param shared_object: Union[ListMP, ListBase, FlagMP]
@@ -518,6 +443,60 @@ def build_shared_manager(shared_object=Union[ListMP, ListBase, FlagMP], params=N
 	lock = manager.RLock()
 	shared_manager_data_instance = getattr(manager, 'MpSyncManager')(lock=lock, **params)
 	return shared_manager_data_instance
+
+
+def worker(shared_manager_data_instance, function_to_run, process_n, thread_n):
+	"""
+	:param shared_manager_data_instance:
+	:param function_to_run:
+	:param process_n:
+	:param thread_n:
+	:return:
+	"""
+	log('START worker N =', process_n, 'thread N=', thread_n, level='DEBUG')
+	try:
+		function_to_run(shared_manager_data_instance)
+	except Exception as ex:
+		log('Exception', ex, 'function_to_run', function_to_run, level='WARNING')
+	return 'DONE worker {} thread {}'.format(process_n, thread_n)
+
+
+def worker_done(result):
+	"""
+	:param result:
+	:return:
+	"""
+	log('DONE worker. result=', result)
+
+
+def thread_pool(shared_manager_data_instance, function_to_run, max_threads, process_n):
+	"""
+	:param shared_manager_data_instance:
+	:param function_to_run:
+	:param max_threads:
+	:param process_n:
+	:return:
+	"""
+	try:
+		log('START Process ', process_n, level='DEBUG')
+		with tPool(max_threads) as executor:
+			multiple_results = [
+				executor.apply_async(
+					worker,
+					args=(
+						shared_manager_data_instance,
+						function_to_run,
+						process_n,
+						i
+					),
+					callback=worker_done
+				) for i in range(max_threads)
+			]
+			_res = [res.get() for res in multiple_results]
+			log('thread_pool _res', _res, level='DEBUG')
+	except (KeyboardInterrupt, SystemExit):
+		exit(0)
+	return 'DONE Process {}'.format(process_n)
 
 
 class PoolMpAsync:
@@ -643,3 +622,39 @@ class PoolWithFlag(PoolMpAsync):
 		"""
 		log('pool_map', self.pool, level='DEBUG')
 		super().run()
+
+
+def __test_queue_reader(q):
+	"""
+	:param q:
+	:return:
+	"""
+	i = 0
+	while True:
+		try:
+			item = q.get()
+		except Exception as ex:
+			log('Exception', ex)
+			item = None
+		if item is None:
+			i += 1
+			log(f'sleep = {i}')
+			time.sleep(i)
+		else:
+			i = 0
+			log(f'item = {item}')
+			yield item
+
+
+def __test_queue_writer(q, value=random.random()):
+	"""
+	:param q:
+	:param value:
+	:return:
+	"""
+	i = 0
+	while True:
+		q.put(value)
+		log('put Q')
+		i += 3
+		time.sleep(i)

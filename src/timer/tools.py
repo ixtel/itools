@@ -4,12 +4,7 @@ from random import uniform, shuffle
 from time import sleep
 from typing import Union
 
-import pytz  # new import
-
-
-# from ..loger.loger import iLog
-# log = iLog(name='iTimer').log
-# from ..config import log
+import pytz
 
 
 def now(time_int: Union[int, float] = None):
